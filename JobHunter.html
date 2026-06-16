@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobHunter — Naman Kudesia</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0F1117;
+    --bg2: #161820;
+    --bg3: #1E2030;
+    --bg4: #252840;
+    --border: #2E3150;
+    --border2: #3D4170;
+    --accent: #5B6EF5;
+    --accent2: #7B8CFF;
+    --accent-soft: rgba(91,110,245,0.12);
+    --green: #22C97A;
+    --green-soft: rgba(34,201,122,0.12);
+    --amber: #F5A623;
+    --amber-soft: rgba(245,166,35,0.10);
+    --red: #F5564A;
+    --red-soft: rgba(245,86,74,0.10);
+    --purple: #A855F7;
+    --purple-soft: rgba(168,85,247,0.10);
+    --text: #E8EAF6;
+    --text2: #9198C0;
+    --text3: #5C6290;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --r: 8px;
+    --r2: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── Layout ── */
+  .shell { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 220px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    padding: 20px 18px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-mark {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent2);
+    letter-spacing: -0.5px;
+  }
+  .logo-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+  .nav { padding: 12px 10px; flex: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: var(--r);
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 13px;
+    margin-bottom: 2px;
+    transition: all .15s;
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: var(--accent-soft); color: var(--accent2); }
+  .nav-icon { font-size: 16px; width: 18px; text-align: center; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .sidebar-footer {
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .profile-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0;
+  }
+  .profile-name { font-size: 12px; font-weight: 500; color: var(--text); }
+  .profile-role { font-size: 11px; color: var(--text3); }
+
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .topbar-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
+  .topbar-actions { display: flex; gap: 8px; }
+
+  .btn {
+    padding: 7px 14px;
+    border-radius: var(--r);
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-size: 12px;
+    font-family: var(--sans);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .15s;
+    font-weight: 500;
+  }
+  .btn:hover { background: var(--bg3); color: var(--text); }
+  .btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn.primary:hover { background: var(--accent2); border-color: var(--accent2); }
+  .btn.green { background: var(--green-soft); color: var(--green); border-color: rgba(34,201,122,0.25); }
+  .btn.green:hover { background: rgba(34,201,122,0.2); }
+  .btn.sm { padding: 4px 10px; font-size: 11px; }
+
+  .content { padding: 24px 28px; }
+
+  /* ── Pages ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── Stats row ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 14px 16px;
+  }
+  .stat-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+  .stat-val { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; }
+  .stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .stat-card.accent { border-color: rgba(91,110,245,0.4); background: var(--accent-soft); }
+  .stat-card.accent .stat-val { color: var(--accent2); }
+  .stat-card.green-c { border-color: rgba(34,201,122,0.3); }
+  .stat-card.green-c .stat-val { color: var(--green); }
+
+  /* ── Section header ── */
+  .sec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .sec-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; }
+
+  /* ── Filter bar ── */
+  .filter-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .filter-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text2);
+    font-family: var(--sans);
+    transition: all .12s;
+    font-weight: 500;
+  }
+  .filter-chip:hover { border-color: var(--border2); color: var(--text); }
+  .filter-chip.on { background: var(--accent-soft); border-color: rgba(91,110,245,0.5); color: var(--accent2); }
+
+  /* ── Search ── */
+  .search-wrap { position: relative; margin-bottom: 16px; }
+  .search-input {
+    width: 100%;
+    padding: 9px 14px 9px 36px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--sans);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 14px; }
+
+  /* ── Job cards ── */
+  .jobs-grid { display: flex; flex-direction: column; gap: 8px; }
+  .job-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: border-color .15s, background .15s;
+    cursor: default;
+  }
+  .job-card:hover { border-color: var(--border2); background: var(--bg3); }
+  .job-card.applied { border-left: 3px solid var(--green); }
+  .job-card.saved { border-left: 3px solid var(--amber); }
+  .job-card.interview { border-left: 3px solid var(--purple); }
+
+  .job-logo {
+    width: 40px; height: 40px;
+    border-radius: var(--r);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text2);
+    flex-shrink: 0;
+    font-family: var(--mono);
+  }
+  .job-body { flex: 1; min-width: 0; }
+  .job-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+  .job-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .job-company { font-size: 12px; color: var(--text2); }
+  .job-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .pill {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .p-remote { background: var(--purple-soft); color: var(--purple); }
+  .p-hybrid { background: var(--accent-soft); color: var(--accent2); }
+  .p-location { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+  .p-new { background: var(--green-soft); color: var(--green); }
+  .p-match { background: var(--bg3); color: var(--text2); }
+  .p-salary { background: var(--amber-soft); color: var(--amber); }
+  .p-status-applied { background: var(--green-soft); color: var(--green); }
+  .p-status-saved { background: var(--amber-soft); color: var(--amber); }
+  .p-status-interview { background: var(--purple-soft); color: var(--purple); }
+  .p-status-rejected { background: var(--red-soft); color: var(--red); }
+
+  .job-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+
+  .match-ring {
+    width: 38px; height: 38px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .match-ring svg { transform: rotate(-90deg); }
+  .match-ring-label {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; color: var(--text);
+  }
+
+  /* ── Tracker table ── */
+  .tracker-table { width: 100%; border-collapse: collapse; }
+  .tracker-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tracker-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .tracker-table tr:last-child td { border-bottom: none; }
+  .tracker-table tr:hover td { background: var(--bg3); }
+  .tracker-table td:first-child { color: var(--text); font-weight: 500; }
+
+  .status-select {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    color: var(--text2);
+    font-size: 11px;
+    font-family: var(--sans);
+    padding: 3px 8px;
+    cursor: pointer;
+    outline: none;
+  }
+  .status-select:focus { border-color: var(--accent); }
+
+  /* ── Email composer ── */
+  .email-composer {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .email-toolbar {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .email-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .email-field-label { font-size: 11px; color: var(--text3); font-weight: 600; min-width: 48px; }
+  .email-field-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--sans);
+  }
+  .email-body {
+    padding: 14px;
+    min-height: 200px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    font-family: var(--sans);
+    outline: none;
+  }
+  .email-body[contenteditable=true] { cursor: text; }
+
+  /* ── Template cards ── */
+  .template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .template-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 14px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .template-card:hover { border-color: var(--accent); background: var(--bg3); }
+  .template-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .template-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .template-desc { font-size: 12px; color: var(--text3); }
+
+  /* ── Settings ── */
+  .settings-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .settings-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .settings-row {
+    display: flex;
+    align-items: center;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-label { font-size: 13px; color: var(--text); flex: 1; }
+  .settings-sub { font-size: 11px; color: var(--text3); }
+  .settings-input {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    color: var(--text);
+    font-size: 12px;
+    font-family: var(--sans);
+    padding: 5px 10px;
+    outline: none;
+    min-width: 180px;
+  }
+  .settings-input:focus { border-color: var(--accent); }
+  .toggle {
+    width: 36px; height: 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    position: relative;
+    transition: all .2s;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: var(--accent); border-color: var(--accent); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    top: 2px; left: 2px;
+    transition: left .2s;
+  }
+  .toggle.on::after { left: 18px; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 24px;
+    width: 520px;
+    max-width: 95vw;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .modal-sub { font-size: 12px; color: var(--text3); margin-bottom: 20px; }
+  .modal-close { float: right; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 18px; line-height: 1; margin-top: -4px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+  .form-row { margin-bottom: 14px; }
+  .form-label { font-size: 12px; color: var(--text3); font-weight: 500; margin-bottom: 5px; display: block; }
+  .form-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--sans);
+    padding: 8px 12px;
+    outline: none;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--sans);
+    padding: 8px 12px;
+    outline: none;
+  }
+
+  /* ── Charts ── */
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .chart-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 16px;
+  }
+  .chart-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px; }
+  .bar-chart { display: flex; flex-direction: column; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; }
+  .bar-label { font-size: 11px; color: var(--text2); min-width: 60px; text-align: right; }
+  .bar-track { flex: 1; height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
+  .bar-val { font-size: 11px; color: var(--text3); min-width: 22px; font-family: var(--mono); }
+
+  .donut-wrap { display: flex; align-items: center; gap: 16px; }
+  .donut-legend { display: flex; flex-direction: column; gap: 6px; }
+  .legend-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── Empty state ── */
+  .empty {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text3);
+  }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-title { font-size: 14px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
+  .empty-sub { font-size: 12px; line-height: 1.6; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all .25s;
+    max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.green { border-left: 3px solid var(--green); }
+  .toast.blue { border-left: 3px solid var(--accent); }
+
+  /* ── Progress bar ── */
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .progress-track { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width .5s; }
+
+  /* ── Daily goal ── */
+  .goal-card {
+    background: var(--accent-soft);
+    border: 1px solid rgba(91,110,245,0.3);
+    border-radius: var(--r2);
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .goal-ring {
+    width: 56px; height: 56px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .goal-ring svg { transform: rotate(-90deg); }
+  .goal-ring-label {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--accent2);
+  }
+  .goal-body { flex: 1; }
+  .goal-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .goal-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  select option { background: var(--bg3); }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">JobHunter</div>
+    <div class="logo-sub">Personal Career Tool</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <span class="nav-icon">⚡</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('jobs',this)">
+      <span class="nav-icon">💼</span> Job Search
+      <span class="nav-badge" id="new-badge">12</span>
+    </div>
+    <div class="nav-item" onclick="showPage('tracker',this)">
+      <span class="nav-icon">📋</span> Tracker
+      <span class="nav-badge" id="applied-badge">0</span>
+    </div>
+    <div class="nav-item" onclick="showPage('emails',this)">
+      <span class="nav-icon">✉️</span> HR Emails
+    </div>
+    <div class="nav-item" onclick="showPage('resumes',this)">
+      <span class="nav-icon">📄</span> Resumes
+    </div>
+    <div class="nav-item" onclick="showPage('analytics',this)">
+      <span class="nav-icon">📊</span> Analytics
+    </div>
+    <div class="nav-item" onclick="showPage('settings',this)">
+      <span class="nav-icon">⚙️</span> Settings
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="profile-mini">
+      <div class="avatar">NK</div>
+      <div>
+        <div class="profile-name">Naman Kudesia</div>
+        <div class="profile-role">Assoc. Software Eng.</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ═══════════════════════════════════════════
+     PAGE: DASHBOARD
+════════════════════════════════════════════ -->
+<div class="page active" id="page-dashboard">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Good morning, Naman 👋</div>
+      <div class="topbar-sub" id="today-date"></div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn" onclick="showPage('jobs', document.querySelector('.nav-item:nth-child(2)'))">Browse jobs →</button>
+      <button class="btn primary" onclick="openAddJob()">+ Log application</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- Daily goal -->
+    <div class="goal-card">
+      <div class="goal-ring">
+        <svg width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="22" fill="none" stroke="rgba(91,110,245,0.2)" stroke-width="4"/>
+          <circle cx="28" cy="28" r="22" fill="none" stroke="#5B6EF5" stroke-width="4"
+            stroke-dasharray="138" stroke-dashoffset="138" id="goal-arc" stroke-linecap="round"/>
+        </svg>
+        <div class="goal-ring-label" id="goal-pct">0%</div>
+      </div>
+      <div class="goal-body">
+        <div class="goal-title">Daily goal: <span id="goal-today">0</span> / <span id="goal-target">10</span> applications</div>
+        <div class="goal-sub">Apply to <span id="goal-remaining">10</span> more jobs today to hit your target. Every application counts!</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn sm green" onclick="showPage('jobs', document.querySelector('.nav-item:nth-child(2)'))">Find jobs</button>
+        <button class="btn sm" onclick="openAddJob()">Log manually</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card accent">
+        <div class="stat-label">Total applied</div>
+        <div class="stat-val" id="stat-total">0</div>
+        <div class="stat-sub">all time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">This week</div>
+        <div class="stat-val" id="stat-week">0</div>
+        <div class="stat-sub">applications</div>
+      </div>
+      <div class="stat-card green-c">
+        <div class="stat-label">Interviews</div>
+        <div class="stat-val" id="stat-interviews">0</div>
+        <div class="stat-sub">scheduled / done</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Response rate</div>
+        <div class="stat-val" id="stat-rate">0%</div>
+        <div class="stat-sub">based on replies</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Emails sent</div>
+        <div class="stat-val" id="stat-emails">0</div>
+        <div class="stat-sub">HR outreach</div>
+      </div>
+    </div>
+
+    <!-- Progress to weekly goal -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Weekly progress (<span id="weekly-count">0</span>/50 applications)</span>
+        <span id="weekly-pct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="weekly-bar" style="width:0%"></div></div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="sec-header">
+      <div class="sec-title">Recent applications</div>
+      <button class="btn sm" onclick="showPage('tracker', document.querySelector('.nav-item:nth-child(3)'))">See all</button>
+    </div>
+    <div id="recent-list">
+      <div class="empty">
+        <div class="empty-icon">🚀</div>
+        <div class="empty-title">No applications yet</div>
+        <div class="empty-sub">Start applying and your activity will appear here.<br>Click "Log application" above to get started.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: JOB SEARCH
+════════════════════════════════════════════ -->
+<div class="page" id="page-jobs">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Job search</div>
+      <div class="topbar-sub">Matched to your profile — Pega · Java · AI · Lucknow / Remote / Hybrid</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn" onclick="refreshJobs()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="text" placeholder="Search by role, company, or skill…" oninput="filterSearch(this.value)" id="search-box">
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-chip on" onclick="setFilter('all',this)">All</button>
+      <button class="filter-chip" onclick="setFilter('pega',this)">Pega</button>
+      <button class="filter-chip" onclick="setFilter('java',this)">Java</button>
+      <button class="filter-chip" onclick="setFilter('software',this)">Software Dev</button>
+      <button class="filter-chip" onclick="setFilter('ai',this)">AI / ML</button>
+      <button class="filter-chip" onclick="setFilter('remote',this)">Remote</button>
+      <button class="filter-chip" onclick="setFilter('hybrid',this)">Hybrid</button>
+      <button class="filter-chip" onclick="setFilter('lucknow',this)">Near Lucknow</button>
+      <button class="filter-chip" onclick="setFilter('new',this)">🟢 New today</button>
+    </div>
+
+    <div class="jobs-grid" id="jobs-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: TRACKER
+════════════════════════════════════════════ -->
+<div class="page" id="page-tracker">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Application tracker</div>
+      <div class="topbar-sub">Track every application — status, notes, follow-ups</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn primary" onclick="openAddJob()">+ Add application</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="filter-bar">
+      <button class="filter-chip on" onclick="setTrackerFilter('all',this)">All</button>
+      <button class="filter-chip" onclick="setTrackerFilter('applied',this)">Applied</button>
+      <button class="filter-chip" onclick="setTrackerFilter('interview',this)">Interview</button>
+      <button class="filter-chip" onclick="setTrackerFilter('offer',this)">Offer</button>
+      <button class="filter-chip" onclick="setTrackerFilter('rejected',this)">Rejected</button>
+      <button class="filter-chip" onclick="setTrackerFilter('saved',this)">Saved</button>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden">
+      <table class="tracker-table">
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Notes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tracker-body">
+          <tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No applications logged yet</div><div class="empty-sub">Add your first application above.</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: HR EMAILS
+════════════════════════════════════════════ -->
+<div class="page" id="page-emails">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">HR outreach emails</div>
+      <div class="topbar-sub">Personalised templates — copy, customise, send from your own email</div>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="sec-header"><div class="sec-title">Choose a template</div></div>
+    <div class="template-grid">
+      <div class="template-card selected" onclick="selectTemplate('cold',this)">
+        <div class="template-name">Cold outreach to HR</div>
+        <div class="template-desc">First contact — introduce yourself + attach resume</div>
+      </div>
+      <div class="template-card" onclick="selectTemplate('followup',this)">
+        <div class="template-name">Follow-up after applying</div>
+        <div class="template-desc">Sent 5–7 days after submitting application online</div>
+      </div>
+      <div class="template-card" onclick="selectTemplate('referral',this)">
+        <div class="template-name">Referral request</div>
+        <div class="template-desc">Ask a LinkedIn connection for an internal referral</div>
+      </div>
+      <div class="template-card" onclick="selectTemplate('interview',this)">
+        <div class="template-name">Thank you after interview</div>
+        <div class="template-desc">Send within 24 hrs of any interview to stand out</div>
+      </div>
+    </div>
+
+    <div class="sec-header">
+      <div class="sec-title">Compose</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn sm" onclick="copyEmail()">📋 Copy email</button>
+        <button class="btn sm green" onclick="openMailto()">✉️ Open in mail app</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div>
+        <label class="form-label">HR name</label>
+        <input class="form-input" id="hr-name" placeholder="e.g. Priya Sharma" oninput="updateEmail()">
+      </div>
+      <div>
+        <label class="form-label">HR email</label>
+        <input class="form-input" id="hr-email" placeholder="priya.sharma@infosys.com" oninput="updateEmail()">
+      </div>
+      <div>
+        <label class="form-label">Company name</label>
+        <input class="form-input" id="hr-company" placeholder="e.g. Infosys" oninput="updateEmail()">
+      </div>
+      <div>
+        <label class="form-label">Role applying for</label>
+        <input class="form-input" id="hr-role" placeholder="e.g. Pega QA Tester" oninput="updateEmail()">
+      </div>
+    </div>
+
+    <div class="email-composer">
+      <div class="email-toolbar">
+        <span style="font-size:11px;color:var(--text3);font-weight:600">SUBJECT</span>
+        <span style="font-size:13px;color:var(--text)" id="email-subject-display">Application for Pega QA Tester — Naman Kudesia</span>
+      </div>
+      <div class="email-field">
+        <span class="email-field-label">To:</span>
+        <span class="email-field-input" id="email-to-display" style="color:var(--text2)">HR name &lt;hr@company.com&gt;</span>
+      </div>
+      <div class="email-body" id="email-body" contenteditable="true"></div>
+    </div>
+
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="btn green" onclick="logEmail()">✓ Mark as sent</button>
+      <span style="font-size:12px;color:var(--text3)">Emails sent this week: <span id="emails-sent-count">0</span></span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: RESUMES
+════════════════════════════════════════════ -->
+<div class="page" id="page-resumes">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Resume vault</div>
+      <div class="topbar-sub">Match the right resume to the right role — every time</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="sec-header"><div class="sec-title">Your 4 tailored resumes</div></div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+
+      <div class="job-card" style="cursor:default">
+        <div class="job-logo" style="background:var(--accent-soft);color:var(--accent2);border-color:rgba(91,110,245,0.3)">JD</div>
+        <div class="job-body">
+          <div class="job-title-row"><div class="job-title">Java Developer Resume</div><span class="pill p-match">ATS: 87</span></div>
+          <div class="job-company">Best for: Java Developer, Software Engineer, Backend roles</div>
+          <div class="job-meta">
+            <span class="pill p-hybrid">Java · OOP · REST API · Spring</span>
+            <span class="pill p-new">LangChain · RAG · CI/CD</span>
+          </div>
+        </div>
+        <div class="job-actions">
+          <button class="btn sm" onclick="showResumeGuide('java')">When to use</button>
+          <a class="btn sm primary" href="https://github.com/namankudesia" target="_blank">View on GitHub</a>
+        </div>
+      </div>
+
+      <div class="job-card" style="cursor:default">
+        <div class="job-logo" style="background:var(--purple-soft);color:var(--purple);border-color:rgba(168,85,247,0.3)">PD</div>
+        <div class="job-body">
+          <div class="job-title-row"><div class="job-title">Pega Developer Resume</div><span class="pill p-match">ATS: 85</span></div>
+          <div class="job-company">Best for: Pega Developer, Pega System Architect, Pega CSA roles</div>
+          <div class="job-meta">
+            <span class="pill p-hybrid">Pega PRPC · Case Mgmt · Decision Tables</span>
+            <span class="pill p-new">SLAs · Flow Actions · UI Harness</span>
+          </div>
+        </div>
+        <div class="job-actions">
+          <button class="btn sm" onclick="showResumeGuide('pega-dev')">When to use</button>
+          <a class="btn sm primary" href="https://github.com/namankudesia" target="_blank">View on GitHub</a>
+        </div>
+      </div>
+
+      <div class="job-card" style="cursor:default">
+        <div class="job-logo" style="background:var(--green-soft);color:var(--green);border-color:rgba(34,201,122,0.3)">SD</div>
+        <div class="job-body">
+          <div class="job-title-row"><div class="job-title">Software Developer Resume</div><span class="pill p-match">ATS: 88</span></div>
+          <div class="job-company">Best for: Software Engineer, Full Stack, .NET Developer roles</div>
+          <div class="job-meta">
+            <span class="pill p-hybrid">Java · .NET · Python · Azure · AWS</span>
+            <span class="pill p-new">SOLID · Design Patterns · REST</span>
+          </div>
+        </div>
+        <div class="job-actions">
+          <button class="btn sm" onclick="showResumeGuide('software')">When to use</button>
+          <a class="btn sm primary" href="https://github.com/namankudesia" target="_blank">View on GitHub</a>
+        </div>
+      </div>
+
+      <div class="job-card" style="cursor:default;border-color:rgba(34,201,122,0.4)">
+        <div class="job-logo" style="background:var(--amber-soft);color:var(--amber);border-color:rgba(245,166,35,0.3)">PT</div>
+        <div class="job-body">
+          <div class="job-title-row"><div class="job-title">Pega Tester Resume</div><span class="pill p-match">ATS: 91 ⭐</span></div>
+          <div class="job-company">Best for: Pega QA Tester, QA Engineer, Software Tester — your strongest match</div>
+          <div class="job-meta">
+            <span class="pill p-hybrid">Pega · Functional · Regression · SIT · UAT</span>
+            <span class="pill p-new">API Testing · E2E · Zero-defect</span>
+          </div>
+        </div>
+        <div class="job-actions">
+          <button class="btn sm" onclick="showResumeGuide('pega-tester')">When to use</button>
+          <a class="btn sm primary" href="https://github.com/namankudesia" target="_blank">View on GitHub</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sec-header"><div class="sec-title">Resume matching guide</div></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px" id="resume-guide">
+      <div style="font-size:13px;color:var(--text3)">Click "When to use" on any resume above to see a detailed matching guide.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: ANALYTICS
+════════════════════════════════════════════ -->
+<div class="page" id="page-analytics">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Analytics</div>
+      <div class="topbar-sub">Track your job search performance over time</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="chart-row">
+      <div class="chart-card">
+        <div class="chart-title">Applications by status</div>
+        <div id="status-chart" class="bar-chart"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Applications by role type</div>
+        <div id="role-chart" class="bar-chart"></div>
+      </div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-card">
+        <div class="chart-title">Response rate trend</div>
+        <div id="response-chart" style="display:flex;align-items:center;justify-content:center;height:80px;color:var(--text3);font-size:12px">Apply to more jobs to see trends</div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Top target companies</div>
+        <div id="company-chart" class="bar-chart"></div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-top:4px">
+      <div class="chart-title" style="margin-bottom:12px">Job search tips based on your data</div>
+      <div id="analytics-tips" style="font-size:13px;color:var(--text2);line-height:1.8">
+        Start applying to generate personalised insights and tips here.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE: SETTINGS
+════════════════════════════════════════════ -->
+<div class="page" id="page-settings">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Settings</div>
+      <div class="topbar-sub">Configure your profile and job preferences</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn primary" onclick="saveSettings()">Save changes</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <div class="settings-section">
+      <div class="settings-header">Your profile</div>
+      <div class="settings-row">
+        <div><div class="settings-label">Full name</div></div>
+        <input class="settings-input" id="s-name" value="Naman Kudesia">
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Email address</div></div>
+        <input class="settings-input" id="s-email" value="namankudesia@gmail.com">
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Phone</div></div>
+        <input class="settings-input" id="s-phone" value="+91-8126799091">
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Current company</div></div>
+        <input class="settings-input" id="s-company" value="Infinite Computer Solutions">
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">GitHub</div></div>
+        <input class="settings-input" id="s-github" value="github.com/namankudesia">
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">LinkedIn</div></div>
+        <input class="settings-input" id="s-linkedin" value="linkedin.com/in/naman-kudesia-b5622aa2">
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-header">Job preferences</div>
+      <div class="settings-row">
+        <div><div class="settings-label">Preferred location</div><div class="settings-sub">Where you want to work</div></div>
+        <input class="settings-input" id="s-loc" value="Lucknow, Remote, Hybrid">
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Expected salary</div></div>
+        <input class="settings-input" id="s-salary" value="₹6–12 LPA">
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Daily application goal</div></div>
+        <input class="settings-input" id="s-goal" type="number" value="10" min="1" max="50">
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-header">Notification preferences</div>
+      <div class="settings-row">
+        <div><div class="settings-label">Daily goal reminder</div><div class="settings-sub">Remind if below daily target</div></div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Follow-up reminders</div><div class="settings-sub">Alert 7 days after applying with no response</div></div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-header">Data management</div>
+      <div class="settings-row">
+        <div><div class="settings-label">Export all data</div><div class="settings-sub">Download your tracker as JSON</div></div>
+        <button class="btn sm" onclick="exportData()">Export JSON</button>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-label">Clear all data</div><div class="settings-sub" style="color:var(--red)">This cannot be undone</div></div>
+        <button class="btn sm" style="color:var(--red);border-color:rgba(245,86,74,0.3)" onclick="clearData()">Clear data</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main><!-- end .main -->
+</div><!-- end .shell -->
+
+<!-- ADD JOB MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Log an application</div>
+    <div class="modal-sub">Record any job you've applied to or want to track</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-row">
+        <label class="form-label">Company name *</label>
+        <input class="form-input" id="m-company" placeholder="e.g. Infosys">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Role / Job title *</label>
+        <input class="form-input" id="m-role" placeholder="e.g. Pega QA Tester">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="m-status">
+          <option value="applied">Applied</option>
+          <option value="saved">Saved (to apply)</option>
+          <option value="interview">Interview scheduled</option>
+          <option value="offer">Offer received</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Work type</label>
+        <select class="form-select" id="m-type">
+          <option value="remote">Remote</option>
+          <option value="hybrid">Hybrid</option>
+          <option value="onsite">On-site</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Role category</label>
+        <select class="form-select" id="m-cat">
+          <option value="pega">Pega Tester/Dev</option>
+          <option value="java">Java Developer</option>
+          <option value="software">Software Developer</option>
+          <option value="ai">AI / ML</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Date applied</label>
+        <input class="form-input" id="m-date" type="date">
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Job URL (optional)</label>
+      <input class="form-input" id="m-url" placeholder="https://...">
+    </div>
+    <div class="form-row">
+      <label class="form-label">Notes</label>
+      <input class="form-input" id="m-notes" placeholder="Salary, HR name, any details…">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" onclick="saveJob()">Save application</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESUME GUIDE MODAL -->
+<div class="modal-overlay" id="resume-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('resume-modal').classList.remove('open')">✕</button>
+    <div class="modal-title" id="rm-title">Resume usage guide</div>
+    <div class="modal-sub" id="rm-sub"></div>
+    <div id="rm-body" style="font-size:13px;color:var(--text2);line-height:1.8"></div>
+    <div class="modal-actions">
+      <button class="btn primary" onclick="document.getElementById('resume-modal').classList.remove('open')">Got it</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════ DATA ═══════
+let state = JSON.parse(localStorage.getItem('jh-state') || 'null') || {
+  applications: [],
+  emailsSent: 0,
+  settings: {
+    name: 'Naman Kudesia',
+    email: 'namankudesia@gmail.com',
+    phone: '+91-8126799091',
+    company: 'Infinite Computer Solutions',
+    github: 'github.com/namankudesia',
+    linkedin: 'linkedin.com/in/naman-kudesia-b5622aa2',
+    location: 'Lucknow, Remote, Hybrid',
+    salary: '₹6–12 LPA',
+    dailyGoal: 10
+  }
+};
+
+function save() {
+  localStorage.setItem('jh-state', JSON.stringify(state));
+}
+
+// ═══════ JOBS DATA ═══════
+const JOBS = [
+  {id:1,title:"Pega QA Tester",company:"Infosys",logo:"INF",loc:"Lucknow",type:"hybrid",cat:"pega",match:95,salary:"₹6–9 LPA",isNew:true,url:"https://www.infosys.com/careers"},
+  {id:2,title:"Pega Developer",company:"Cognizant",logo:"COG",loc:"Remote",type:"remote",cat:"pega",match:88,salary:"₹8–12 LPA",isNew:true,url:"https://careers.cognizant.com"},
+  {id:3,title:"Java Developer",company:"Wipro",logo:"WIP",loc:"Lucknow",type:"hybrid",cat:"java",match:90,salary:"₹7–10 LPA",isNew:true,url:"https://careers.wipro.com"},
+  {id:4,title:"Pega System Architect",company:"Capgemini",logo:"CAP",loc:"Remote",type:"remote",cat:"pega",match:82,salary:"₹10–15 LPA",isNew:false,url:"https://www.capgemini.com/in-en/careers"},
+  {id:5,title:"Software Engineer (.NET)",company:"HCLTech",logo:"HCL",loc:"Lucknow",type:"hybrid",cat:"software",match:87,salary:"₹6–10 LPA",isNew:true,url:"https://www.hcltech.com/careers"},
+  {id:6,title:"Associate Java Developer",company:"TCS",logo:"TCS",loc:"Lucknow",type:"hybrid",cat:"java",match:85,salary:"₹5–8 LPA",isNew:false,url:"https://ibegin.tcs.com"},
+  {id:7,title:"Pega BPM Tester",company:"Mphasis",logo:"MPH",loc:"Remote",type:"remote",cat:"pega",match:93,salary:"₹7–11 LPA",isNew:true,url:"https://careers.mphasis.com"},
+  {id:8,title:"AI / ML Engineer",company:"Persistent",logo:"PER",loc:"Remote",type:"remote",cat:"ai",match:80,salary:"₹9–14 LPA",isNew:true,url:"https://www.persistent.com/careers"},
+  {id:9,title:"Pega Developer",company:"Accenture",logo:"ACC",loc:"Hybrid",type:"hybrid",cat:"pega",match:86,salary:"₹9–13 LPA",isNew:false,url:"https://www.accenture.com/in-en/careers"},
+  {id:10,title:"Java Full Stack",company:"Tech Mahindra",logo:"TM",loc:"Remote",type:"remote",cat:"java",match:83,salary:"₹7–11 LPA",isNew:false,url:"https://careers.techmahindra.com"},
+  {id:11,title:"Software Developer (.NET+Azure)",company:"Birlasoft",logo:"BIR",loc:"Lucknow",type:"hybrid",cat:"software",match:88,salary:"₹6–10 LPA",isNew:true,url:"https://www.birlasoft.com/company/careers"},
+  {id:12,title:"QA Automation Engineer",company:"LTIMindtree",logo:"LTI",loc:"Remote",type:"remote",cat:"java",match:84,salary:"₹7–12 LPA",isNew:true,url:"https://www.ltimindtree.com/careers"},
+  {id:13,title:"Pega QA Analyst",company:"IBM",logo:"IBM",loc:"Remote",type:"remote",cat:"pega",match:89,salary:"₹8–13 LPA",isNew:false,url:"https://www.ibm.com/in-en/employment"},
+  {id:14,title:"Software Engineer (AI)",company:"Zensar",logo:"ZEN",loc:"Hybrid",type:"hybrid",cat:"ai",match:78,salary:"₹8–12 LPA",isNew:true,url:"https://www.zensar.com/careers"},
+];
+
+let currentJobFilter = 'all';
+let currentTrackerFilter = 'all';
+let searchQuery = '';
+
+// ═══════ NAVIGATION ═══════
+function showPage(id, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  if (id === 'jobs') renderJobs();
+  if (id === 'tracker') renderTracker();
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'analytics') renderAnalytics();
+  if (id === 'emails') { selectTemplate('cold', document.querySelector('.template-card')); }
+}
+
+// ═══════ DASHBOARD ═══════
+function renderDashboard() {
+  const today = new Date().toDateString();
+  const todayApps = state.applications.filter(a => new Date(a.date).toDateString() === today);
+  const weekApps = state.applications.filter(a => {
+    const d = new Date(a.date);
+    const now = new Date();
+    return (now - d) < 7 * 86400000;
+  });
+  const interviews = state.applications.filter(a => a.status === 'interview');
+  const responses = state.applications.filter(a => ['interview','offer','rejected'].includes(a.status));
+  const rate = state.applications.length ? Math.round(responses.length / state.applications.length * 100) : 0;
+  const goal = state.settings.dailyGoal || 10;
+  const pct = Math.min(100, Math.round(todayApps.length / goal * 100));
+  const circ = 138;
+
+  document.getElementById('stat-total').textContent = state.applications.filter(a=>a.status==='applied'||a.status==='interview'||a.status==='offer'||a.status==='rejected').length;
+  document.getElementById('stat-week').textContent = weekApps.length;
+  document.getElementById('stat-interviews').textContent = interviews.length;
+  document.getElementById('stat-rate').textContent = rate + '%';
+  document.getElementById('stat-emails').textContent = state.emailsSent;
+  document.getElementById('goal-today').textContent = todayApps.length;
+  document.getElementById('goal-target').textContent = goal;
+  document.getElementById('goal-remaining').textContent = Math.max(0, goal - todayApps.length);
+  document.getElementById('goal-pct').textContent = pct + '%';
+  document.getElementById('goal-arc').style.strokeDashoffset = circ - (circ * pct / 100);
+
+  const weekly = Math.min(50, weekApps.length);
+  const wpct = Math.round(weekly / 50 * 100);
+  document.getElementById('weekly-count').textContent = weekly;
+  document.getElementById('weekly-pct').textContent = wpct + '%';
+  document.getElementById('weekly-bar').style.width = wpct + '%';
+
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+  const recent = [...state.applications].reverse().slice(0, 5);
+  const rl = document.getElementById('recent-list');
+  if (!recent.length) {
+    rl.innerHTML = `<div class="empty"><div class="empty-icon">🚀</div><div class="empty-title">No applications yet</div><div class="empty-sub">Start applying and your activity will appear here.</div></div>`;
+    return;
+  }
+  rl.innerHTML = `<div class="jobs-grid">${recent.map(a => `
+    <div class="job-card ${a.status}">
+      <div class="job-logo">${a.company.slice(0,3).toUpperCase()}</div>
+      <div class="job-body">
+        <div class="job-title-row"><div class="job-title">${a.role}</div></div>
+        <div class="job-company">${a.company}</div>
+        <div class="job-meta">
+          <span class="pill p-status-${a.status}">${a.status.charAt(0).toUpperCase()+a.status.slice(1)}</span>
+          <span class="pill p-location">${a.type}</span>
+          <span class="pill p-match">${new Date(a.date).toLocaleDateString('en-IN')}</span>
+        </div>
+      </div>
+    </div>`).join('')}</div>`;
+
+  document.getElementById('applied-badge').textContent = state.applications.filter(a=>a.status==='applied').length;
+}
+
+// ═══════ JOB SEARCH ═══════
+function renderJobs() {
+  let jobs = [...JOBS];
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    jobs = jobs.filter(j => j.title.toLowerCase().includes(q) || j.company.toLowerCase().includes(q));
+  }
+  if (currentJobFilter !== 'all') {
+    if (currentJobFilter === 'new') jobs = jobs.filter(j => j.isNew);
+    else if (currentJobFilter === 'remote') jobs = jobs.filter(j => j.type === 'remote');
+    else if (currentJobFilter === 'hybrid') jobs = jobs.filter(j => j.type === 'hybrid');
+    else if (currentJobFilter === 'lucknow') jobs = jobs.filter(j => j.loc.toLowerCase().includes('lucknow'));
+    else jobs = jobs.filter(j => j.cat === currentJobFilter);
+  }
+  jobs.sort((a,b) => b.match - a.match);
+  document.getElementById('new-badge').textContent = JOBS.filter(j=>j.isNew).length;
+
+  const grid = document.getElementById('jobs-grid');
+  if (!jobs.length) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No jobs match this filter</div><div class="empty-sub">Try a different filter or search term.</div></div>`;
+    return;
+  }
+  const applied = state.applications.map(a=>a.company+a.role);
+  grid.innerHTML = jobs.map(j => {
+    const isApplied = applied.includes(j.company+j.title);
+    const r = j.match / 100 * 100.5;
+    return `<div class="job-card">
+      <div class="job-logo">${j.logo}</div>
+      <div class="match-ring">
+        <svg width="38" height="38" viewBox="0 0 38 38">
+          <circle cx="19" cy="19" r="15" fill="none" stroke="rgba(91,110,245,0.15)" stroke-width="3"/>
+          <circle cx="19" cy="19" r="15" fill="none" stroke="#5B6EF5" stroke-width="3"
+            stroke-dasharray="94.2" stroke-dashoffset="${94.2 - 94.2*j.match/100}" stroke-linecap="round"/>
+        </svg>
+        <div class="match-ring-label">${j.match}</div>
+      </div>
+      <div class="job-body">
+        <div class="job-title-row">
+          <div class="job-title">${j.title}</div>
+          ${j.isNew ? '<span class="pill p-new">New</span>' : ''}
+        </div>
+        <div class="job-company">${j.company}</div>
+        <div class="job-meta">
+          <span class="pill p-location">📍 ${j.loc}</span>
+          <span class="pill ${j.type==='remote'?'p-remote':'p-hybrid'}">${j.type}</span>
+          <span class="pill p-salary">${j.salary}</span>
+        </div>
+      </div>
+      <div class="job-actions">
+        ${isApplied ? '<span class="pill p-status-applied">✓ Applied</span>' :
+          `<button class="btn sm primary" onclick="quickApply(${j.id},'${j.title}','${j.company}','${j.type}','${j.cat}','${j.url}')">Apply + Track</button>`}
+        <a class="btn sm" href="${j.url}" target="_blank">View →</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setFilter(f, el) {
+  currentJobFilter = f;
+  document.querySelectorAll('.filter-bar .filter-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  renderJobs();
+}
+
+function filterSearch(q) {
+  searchQuery = q;
+  renderJobs();
+}
+
+function refreshJobs() {
+  showToast('blue', '↻ Jobs refreshed! Check the newest postings.');
+  JOBS.forEach((j,i) => { if (Math.random()>.7) j.isNew = true; });
+  renderJobs();
+}
+
+function quickApply(id, title, company, type, cat, url) {
+  const today = new Date().toISOString().slice(0,10);
+  state.applications.push({id: Date.now(), company, role: title, status: 'applied', type, cat, date: today, notes: '', url});
+  save();
+  renderJobs();
+  renderDashboard();
+  showToast('green', `✓ Logged application to ${company} — ${title}`);
+  window.open(url, '_blank');
+}
+
+// ═══════ TRACKER ═══════
+function renderTracker() {
+  let apps = [...state.applications].reverse();
+  if (currentTrackerFilter !== 'all') apps = apps.filter(a => a.status === currentTrackerFilter);
+  const tb = document.getElementById('tracker-body');
+  if (!apps.length) {
+    tb.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No applications here</div><div class="empty-sub">Log your first application.</div></div></td></tr>`;
+    return;
+  }
+  tb.innerHTML = apps.map(a => `
+    <tr>
+      <td>${a.company}</td>
+      <td>${a.role}</td>
+      <td style="font-family:var(--mono);font-size:11px">${a.date}</td>
+      <td><span class="pill p-${a.type==='remote'?'remote':'hybrid'}">${a.type}</span></td>
+      <td>
+        <select class="status-select" onchange="updateStatus(${a.id},this.value)">
+          ${['saved','applied','interview','offer','rejected'].map(s=>`<option value="${s}" ${a.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+        </select>
+      </td>
+      <td style="font-size:12px;color:var(--text3)">${a.notes||'—'}</td>
+      <td><button class="btn sm" style="color:var(--red);border-color:rgba(245,86,74,0.2)" onclick="deleteApp(${a.id})">✕</button></td>
+    </tr>`).join('');
+}
+
+function setTrackerFilter(f, el) {
+  currentTrackerFilter = f;
+  document.querySelectorAll('#page-tracker .filter-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  renderTracker();
+}
+
+function updateStatus(id, val) {
+  const app = state.applications.find(a=>a.id===id);
+  if (app) { app.status = val; save(); renderDashboard(); showToast('green', 'Status updated'); }
+}
+
+function deleteApp(id) {
+  state.applications = state.applications.filter(a=>a.id!==id);
+  save(); renderTracker(); renderDashboard();
+  showToast('green', 'Application removed');
+}
+
+// ═══════ ADD JOB MODAL ═══════
+function openAddJob() {
+  document.getElementById('m-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('add-modal').classList.add('open');
+}
+function closeModal() { document.getElementById('add-modal').classList.remove('open'); }
+
+function saveJob() {
+  const co = document.getElementById('m-company').value.trim();
+  const ro = document.getElementById('m-role').value.trim();
+  if (!co || !ro) { showToast('','Please fill in company and role'); return; }
+  state.applications.push({
+    id: Date.now(), company: co, role: ro,
+    status: document.getElementById('m-status').value,
+    type: document.getElementById('m-type').value,
+    cat: document.getElementById('m-cat').value,
+    date: document.getElementById('m-date').value || new Date().toISOString().slice(0,10),
+    url: document.getElementById('m-url').value,
+    notes: document.getElementById('m-notes').value
+  });
+  save(); closeModal(); renderDashboard(); renderTracker();
+  showToast('green', `✓ Application to ${co} saved!`);
+  ['m-company','m-role','m-url','m-notes'].forEach(id => document.getElementById(id).value='');
+}
+
+// ═══════ EMAIL TEMPLATES ═══════
+const TEMPLATES = {
+  cold: {
+    subj: 'Application for {role} — Naman Kudesia',
+    body: `Dear {hrname},
+
+I hope this message finds you well. I am writing to express my strong interest in the {role} position at {company}.
+
+I am currently an Associate Software Engineer at Infinite Computer Solutions, where I have hands-on experience in Pega-based healthcare applications, Java development, and enterprise application testing — maintaining a zero-defect delivery record across all production releases.
+
+I have also built several AI/ML projects including an LLM-based clinical diagnosis assistant and a RAG customer support chatbot, which reflect my initiative and passion for emerging technologies.
+
+I would love the opportunity to discuss how my skills and experience align with your team's needs. I have attached my resume for your review.
+
+GitHub: github.com/namankudesia
+LinkedIn: linkedin.com/in/naman-kudesia-b5622aa2
+
+Thank you for your time. I look forward to hearing from you.
+
+Warm regards,
+Naman Kudesia
++91-8126799091 | namankudesia@gmail.com`
+  },
+  followup: {
+    subj: 'Follow-up: Application for {role} — Naman Kudesia',
+    body: `Dear {hrname},
+
+I hope you are doing well. I wanted to follow up on my application for the {role} position at {company}, which I submitted approximately a week ago.
+
+I remain very interested in this opportunity and believe my experience in Pega testing, Java development, and AI/LLM projects would make me a strong contributor to your team.
+
+Could you kindly let me know the current status of my application? I am happy to provide any additional information you may need.
+
+Thank you for your time and consideration.
+
+Best regards,
+Naman Kudesia
++91-8126799091 | namankudesia@gmail.com`
+  },
+  referral: {
+    subj: 'Referral request — {role} at {company}',
+    body: `Hi {hrname},
+
+I hope you are doing well! I came across your profile on LinkedIn and noticed you work at {company} — I am very interested in the {role} opening there.
+
+I have 1+ years of experience in Pega testing, Java, .NET, and AI/ML development. I have been building real-world projects including an LLM-based chatbot and fraud detection system, and I maintain a zero-defect delivery record in my current role.
+
+Would you be open to referring me for this position or connecting me with the hiring team? I'd be happy to share my resume and portfolio.
+
+Thank you so much — I truly appreciate it!
+
+Warm regards,
+Naman Kudesia
+github.com/namankudesia`
+  },
+  interview: {
+    subj: 'Thank you — {role} interview at {company}',
+    body: `Dear {hrname},
+
+Thank you so much for taking the time to speak with me today about the {role} position at {company}. I really enjoyed our conversation and learning more about the team and the role.
+
+Our discussion reinforced my enthusiasm for joining {company}. I am particularly excited about [mention one specific thing discussed in the interview].
+
+I remain very interested in this opportunity and I am confident that my background in Pega testing, Java development, and AI projects would allow me to contribute meaningfully to your team from day one.
+
+Please do not hesitate to reach out if you need any additional information. I look forward to next steps.
+
+Warm regards,
+Naman Kudesia
++91-8126799091 | namankudesia@gmail.com`
+  }
+};
+
+let currentTemplate = 'cold';
+
+function selectTemplate(key, el) {
+  currentTemplate = key;
+  document.querySelectorAll('.template-card').forEach(c=>c.classList.remove('selected'));
+  if(el) el.classList.add('selected');
+  updateEmail();
+}
+
+function updateEmail() {
+  const hrname = document.getElementById('hr-name').value || 'HR Team';
+  const company = document.getElementById('hr-company').value || '[Company]';
+  const role = document.getElementById('hr-role').value || '[Role]';
+  const hremail = document.getElementById('hr-email').value || 'hr@company.com';
+  const t = TEMPLATES[currentTemplate];
+  const fill = s => s.replace(/{hrname}/g,hrname).replace(/{company}/g,company).replace(/{role}/g,role);
+  document.getElementById('email-subject-display').textContent = fill(t.subj);
+  document.getElementById('email-to-display').textContent = `${hrname} <${hremail}>`;
+  document.getElementById('email-body').textContent = fill(t.body);
+}
+
+function copyEmail() {
+  const subj = document.getElementById('email-subject-display').textContent;
+  const body = document.getElementById('email-body').textContent;
+  navigator.clipboard.writeText('Subject: ' + subj + '\n\n' + body);
+  showToast('green', '✓ Email copied to clipboard!');
+}
+
+function openMailto() {
+  const subj = encodeURIComponent(document.getElementById('email-subject-display').textContent);
+  const body = encodeURIComponent(document.getElementById('email-body').textContent);
+  const to = document.getElementById('hr-email').value;
+  window.open(`mailto:${to}?subject=${subj}&body=${body}`);
+}
+
+function logEmail() {
+  state.emailsSent++;
+  save();
+  document.getElementById('emails-sent-count').textContent = state.emailsSent;
+  document.getElementById('stat-emails').textContent = state.emailsSent;
+  showToast('green', '✓ Email marked as sent and logged!');
+}
+
+// ═══════ RESUME GUIDE ═══════
+const RESUME_GUIDES = {
+  java: { title:'Java Developer Resume', sub:'ATS Score: 87 | Best for Java/backend roles', body:`Use this resume when applying to:
+• Java Developer, Backend Engineer, Software Engineer (Java)
+• Roles that mention: Spring Boot, OOP, REST APIs, Maven, TestNG
+• Companies like: Infosys, Wipro, TCS, HCLTech for Java practice
+
+Key differentiators in this resume:
+• AI Chatbot project with LangChain + GPT-4 (makes you stand out vs other Java freshers)
+• Automated API Test Framework in Java (proves practical Java skills)
+• Azure + AWS certifications (shows cloud awareness)
+
+Do NOT use for: Pega-specific roles — use the Pega Tester or Pega Dev resume instead.`},
+  'pega-dev': { title:'Pega Developer Resume', sub:'ATS Score: 85 | Best for Pega development roles', body:`Use this resume when applying to:
+• Pega Developer, Pega System Architect, Pega PRPC Developer
+• Roles mentioning: Case Management, Decision Tables, SLAs, Flow Actions
+• Companies with Pega CoE: Cognizant, Capgemini, Accenture, IBM
+
+Key differentiators:
+• Pega Case Management Simulator project (shows you code in Pega even outside work)
+• LLM Pega Test Case Generator (unique AI + Pega combination)
+• Production healthcare app experience framed as development exposure
+
+Tip: Once you get Pega CSA certified, this resume jumps to 92+ ATS score.`},
+  software: { title:'Software Developer Resume', sub:'ATS Score: 88 | Best for broad software roles', body:`Use this resume when applying to:
+• Software Developer, Full Stack Engineer, .NET Developer, Application Developer
+• Roles with broad tech stack: Java + .NET + Python + Cloud
+• Startups, product companies, and non-Pega IT services
+
+Key differentiators:
+• Widest tech stack coverage of all 4 resumes
+• HealthAI LLM project + Fraud Detection system (impressive for any software role)
+• Cloud certifications: Google Cloud + AWS
+
+Use when the JD doesn't specifically ask for Pega or pure Java — covers the most ground.`},
+  'pega-tester': { title:'Pega Tester Resume', sub:'ATS Score: 91 ⭐ | Your STRONGEST resume', body:`Use this resume for:
+• Pega QA Tester, QA Analyst, Software Tester, Test Engineer
+• Any role with: Functional Testing, Regression, SIT, UAT, API Testing
+• Healthcare domain roles (Utilization Management, Prior Auth experience)
+
+Why this is your best resume:
+• Direct, real production experience in Pega testing — no framing needed
+• Zero-defect delivery record is a powerful, verifiable claim
+• Healthcare domain knowledge is rare and highly valued
+• LLM test case generator project shows innovation in QA
+
+This is the role you're most likely to get a call for. Apply to all Pega Tester roles FIRST.`}
+};
+
+function showResumeGuide(key) {
+  const g = RESUME_GUIDES[key];
+  if (!g) return;
+  document.getElementById('rm-title').textContent = g.title;
+  document.getElementById('rm-sub').textContent = g.sub;
+  document.getElementById('rm-body').innerHTML = g.body.replace(/\n/g,'<br>').replace(/•/g,'<span style="color:var(--accent2)">•</span>');
+  document.getElementById('resume-modal').classList.add('open');
+}
+
+// ═══════ ANALYTICS ═══════
+function renderAnalytics() {
+  const apps = state.applications;
+  const statuses = ['applied','interview','offer','rejected','saved'];
+  const statusColors = { applied:'#5B6EF5', interview:'#A855F7', offer:'#22C97A', rejected:'#F5564A', saved:'#F5A623' };
+  const sc = document.getElementById('status-chart');
+  const maxS = Math.max(...statuses.map(s=>apps.filter(a=>a.status===s).length), 1);
+  sc.innerHTML = statuses.map(s => {
+    const n = apps.filter(a=>a.status===s).length;
+    return `<div class="bar-row">
+      <div class="bar-label">${s.charAt(0).toUpperCase()+s.slice(1)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/maxS*100)}%;background:${statusColors[s]}"></div></div>
+      <div class="bar-val">${n}</div>
+    </div>`;
+  }).join('');
+
+  const cats = ['pega','java','software','ai','other'];
+  const catLabels = {pega:'Pega',java:'Java',software:'Software',ai:'AI/ML',other:'Other'};
+  const catColors = ['#5B6EF5','#22C97A','#F5A623','#A855F7','#9198C0'];
+  const rc = document.getElementById('role-chart');
+  const maxR = Math.max(...cats.map(c=>apps.filter(a=>a.cat===c).length), 1);
+  rc.innerHTML = cats.map((c,i) => {
+    const n = apps.filter(a=>a.cat===c).length;
+    return `<div class="bar-row">
+      <div class="bar-label">${catLabels[c]}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/maxR*100)}%;background:${catColors[i]}"></div></div>
+      <div class="bar-val">${n}</div>
+    </div>`;
+  }).join('');
+
+  const companies = {};
+  apps.forEach(a => { companies[a.company] = (companies[a.company]||0)+1; });
+  const topCo = Object.entries(companies).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const cc = document.getElementById('company-chart');
+  if (!topCo.length) {
+    cc.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px 0">No data yet</div>';
+  } else {
+    const maxC = Math.max(...topCo.map(c=>c[1]), 1);
+    cc.innerHTML = topCo.map(([co,n]) => `<div class="bar-row">
+      <div class="bar-label" style="font-size:10px">${co.slice(0,8)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/maxC*100)}%;background:#5B6EF5"></div></div>
+      <div class="bar-val">${n}</div>
+    </div>`).join('');
+  }
+
+  const tips = [];
+  if (apps.length < 10) tips.push('🎯 Apply to at least 10 jobs to start seeing meaningful response rate data.');
+  if (apps.filter(a=>a.cat==='pega-tester'||a.cat==='pega').length < 5) tips.push('⭐ Your Pega Tester resume scores 91 — apply to more Pega roles for fastest results.');
+  if (apps.filter(a=>a.type==='remote').length < apps.filter(a=>a.type==='hybrid').length) tips.push('🌐 You have more hybrid than remote applications — expand to remote roles to increase volume.');
+  if (!tips.length) tips.push('✅ Great job! Keep applying consistently — aim for 10+ per day.');
+  document.getElementById('analytics-tips').innerHTML = tips.join('<br>');
+}
+
+// ═══════ SETTINGS ═══════
+function saveSettings() {
+  state.settings = {
+    name: document.getElementById('s-name').value,
+    email: document.getElementById('s-email').value,
+    phone: document.getElementById('s-phone').value,
+    company: document.getElementById('s-company').value,
+    github: document.getElementById('s-github').value,
+    linkedin: document.getElementById('s-linkedin').value,
+    location: document.getElementById('s-loc').value,
+    salary: document.getElementById('s-salary').value,
+    dailyGoal: parseInt(document.getElementById('s-goal').value) || 10
+  };
+  save();
+  showToast('green', '✓ Settings saved!');
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'JobHunter-Naman-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('blue', '✓ Data exported as JSON!');
+}
+
+function clearData() {
+  if (!confirm('Clear ALL application data? This cannot be undone.')) return;
+  state.applications = [];
+  state.emailsSent = 0;
+  save(); renderDashboard(); renderTracker();
+  showToast('', 'All data cleared');
+}
+
+// ═══════ TOAST ═══════
+let toastTimer;
+function showToast(type, msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ═══════ INIT ═══════
+renderDashboard();
+renderJobs();
+updateEmail();
+document.getElementById('emails-sent-count').textContent = state.emailsSent;
+</script>
+</body>
+</html>
